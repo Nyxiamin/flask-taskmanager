@@ -8,13 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 
-chrome_options = Options()
-chrome_options.add_argument("--headless=new")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
 
-service = ChromeService(executable_path="/usr/bin/chromedriver")
-driver = webdriver.Chrome(service=service, options=chrome_options)
 
 APP_URL = "http://127.0.0.1:5000"
 
@@ -23,7 +17,8 @@ APP_URL = "http://127.0.0.1:5000"
 @pytest.fixture(scope="module")
 def driver():
     chrome_options = Options()
-    chrome_options.add_argument("--headless=new")  # headless pour CI; retire si tu veux voir le navigateur
+    chrome_options.binary_location = "/opt/hostedtoolcache/setup-chrome/chromium/114.0.5735.133/x64/chrome"
+    chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     service = ChromeService(ChromeDriverManager(version="114.0.5735.90").install())

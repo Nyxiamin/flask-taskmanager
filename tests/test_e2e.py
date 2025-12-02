@@ -26,7 +26,7 @@ def driver():
     chrome_options.add_argument("--headless=new")  # headless pour CI; retire si tu veux voir le navigateur
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    service = ChromeService(ChromeDriverManager().install())
+    service = ChromeService(ChromeDriverManager(version="114.0.5735.90").install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
     yield driver
     driver.quit()

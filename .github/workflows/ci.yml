@@ -39,17 +39,6 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-            chrome-version: '114'
-            
-      - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@v1
-        with:
-            chromedriver-version: '114.0.5735.90'
-
-
 
       - name: Run tests
         run: |

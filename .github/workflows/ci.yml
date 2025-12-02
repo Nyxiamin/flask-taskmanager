@@ -9,22 +9,51 @@ on:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: taskmanager
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.10.13
+
       - name: Install dependencies
         run: |
-            python -m venv venv
-            source venv/bin/activate
-            pip install -r requirements.txt
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: '117'
+
+      - name: Set DATABASE_URL
+        run: echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/taskmanager" >> $GITHUB_ENV
+
       - name: Run tests
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
         run: |
-            source venv/bin/activate
-            export PYTHONPATH=$PYTHONPATH:$(pwd)
-            pytest -q
+          source venv/bin/activate
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          pytest -q
+
       - name: Build Docker image
         run: docker build -t myapp:latest .
 
@@ -34,12 +63,15 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
+
       - name: Log in to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build Docker image
         run: docker build -t nyxiamin/flask-taskmanager:latest .
+
       - name: Push Docker image
         run: docker push nyxiamin/flask-taskmanager:latest

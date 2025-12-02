@@ -10,13 +10,14 @@ from selenium.webdriver.chrome.options import Options
 APP_URL = "http://127.0.0.1:5000"
 
 
+
 @pytest.fixture(scope="module")
 def driver():
     chrome_options = Options()
     chrome_options.add_argument("--headless=new")  # headless pour CI; retire si tu veux voir le navigateur
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    service = ChromeService(ChromeDriverManager().install())
+    service = ChromeService(ChromeDriverManager(version="117.0.5938.92").install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
     yield driver
     driver.quit()

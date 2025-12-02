@@ -42,7 +42,13 @@ jobs:
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: 'latest'
+            chrome-version: 'latest'
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@v1
+        with:
+            chromedriver-version: 'latest'
+
 
       - name: Run tests
         run: |
